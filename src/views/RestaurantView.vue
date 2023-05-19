@@ -7,8 +7,9 @@ import raa from '../composables/restaurant.js'
 export default {
     
     setup(){
-        const {init,loadmodles, animate} = raa()
+        const {init, textInteraction,loadmodles, animate} = raa()
         init()
+        textInteraction()
         loadmodles()
         animate()
     }

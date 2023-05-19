@@ -1,10 +1,11 @@
 import * as THREE from 'three'
 import spmkglb from '../assets/place/supermarket.glb?url'
-import worker from '../assets/people/worker.fbx?url'
+//import worker from '../assets/people/worker(nodding).fbx?url'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls'
+import { Object3D } from 'three.js'
 
 const supermarket = () => {
     const loader = new GLTFLoader();
@@ -24,30 +25,30 @@ const supermarket = () => {
         document.body.appendChild(renderer.domElement);
 
         camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-        camera.position.set(-0.01, 0.01, -0.01);
+        camera.position.set(-15, 35, 80);
 
         // controls
 
-        controls = new OrbitControls(camera, renderer.domElement);
-        controls.listenToKeyEvents(window); // optional
+        // controls = new OrbitControls(camera, renderer.domElement);
+        // controls.listenToKeyEvents(window); // optional
 
-        //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
+        // //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
 
-        controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-        controls.dampingFactor = 0.05;
+        // controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+        // controls.dampingFactor = 0.05;
 
-        controls.screenSpacePanning = false;
+        // controls.screenSpacePanning = false;
 
-        controls.minDistance = 100;
-        controls.maxDistance = 500;
+        // controls.minDistance = 100;
+        // controls.maxDistance = 500;
 
-        controls.maxPolarAngle = Math.PI / 2;
+        // controls.maxPolarAngle = Math.PI / 2;
 
-        // controls = new FirstPersonControls(camera, renderer.domElement); // 第一人稱視角(相機,繪製輸出的Canvas物件)
-        // controls.lookSpeed = 0.009; //環視速度(預設為0.005)
-        // controls.movementSpeed = 10; //移動速度(預設為1)
-        // controls.lookVertical = false; //垂直環視
-        // controls.constrainVertical = false; //垂直限制
+        controls = new FirstPersonControls(camera, renderer.domElement); // 第一人稱視角(相機,繪製輸出的Canvas物件)
+        controls.lookSpeed = 0.012; //環視速度(預設為0.005)
+        controls.movementSpeed = 12; //移動速度(預設為1)
+        controls.lookVertical = false; //垂直環視
+        controls.constrainVertical = false; //垂直限制
 
         // lights
 
@@ -86,28 +87,28 @@ const supermarket = () => {
     }
     function loadmodles() {
         loader.load(spmkglb, (gltf) => {
-            gltf.scene.scale.set(0.5, 0.5, 0.5);//設定大小
-            gltf.scene.position.set(0, 5.5, 0);//設定位置
+            gltf.scene.scale.set(10, 10, 10);//設定大小
+            gltf.scene.position.set(0, 0, 0);//設定位置
             scene.add(gltf.scene)
         })
-        floader.load(worker, (obj) => {
-            mixer = new THREE.AnimationMixer(obj)
-            //action = obj.mixer.clipAction(obj.animations[0])
-            //action.play()
-            obj.scale.set(0.023, 0.023, 0.023)
-            obj.position.set(13, 13, 18)
-            obj.rotation.y = Math.PI
-            scene.add(obj)
+        // floader.load(worker, (obj) => {
+        //     mixer = new THREE.AnimationMixer(obj)
+        //     //action = obj.mixer.clipAction(obj.animations[0])
+        //     //action.play()
+        //     obj.scale.set(0.023, 0.023, 0.023)
+        //     obj.position.set(13, 13, 18)
+        //     obj.rotation.y = Math.PI
+        //     scene.add(obj)
 
-        })
+        // })
     }
     function animate() {
 
         requestAnimationFrame(animate);
 
-        controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
+        //controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
 
-        //controls.update(clock.getDelta());
+        controls.update(clock.getDelta());
 
         if (mixer) mixer.update(clock.getDelta()) //for 人物動畫
 

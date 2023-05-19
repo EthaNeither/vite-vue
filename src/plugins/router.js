@@ -6,12 +6,18 @@ import RestaurantView from '../views/RestaurantView.vue'
 import MRTView from '../views/MRTView.vue'
 import SupermarketView from '../views/SupermarketView.vue'
 import ResultView from '../views/ResultView.vue'
+import SignupForm from '../views/SignupForm.vue'
 
 const routes = [
     {
         path: '/',
         name: 'home',
         component: HomeView
+    },
+    {
+        path: '/signup',
+        name: 'signup',
+        component: SignupForm
     },
     {
         path: '/lobby',

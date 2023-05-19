@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import mrtglb from '../assets/place/MRT.glb?url'
-import staff from '../assets/people/staff.fbx?url'
+//import staff from '../assets/people/staff(nodding).fbx?url'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
@@ -24,30 +24,30 @@ const MRT = () => {
         document.body.appendChild(renderer.domElement);
 
         camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-        camera.position.set(2, 1, 0);
+        camera.position.set(40, 27, 30);
 
         // controls
 
-        controls = new OrbitControls(camera, renderer.domElement);
-        controls.listenToKeyEvents(window); // optional
+        // controls = new OrbitControls(camera, renderer.domElement);
+        // controls.listenToKeyEvents(window); // optional
 
-        //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
+        // //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
 
-        controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-        controls.dampingFactor = 0.05;
+        // controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+        // controls.dampingFactor = 0.05;
 
-        controls.screenSpacePanning = false;
+        // controls.screenSpacePanning = false;
 
-        controls.minDistance = 100;
-        controls.maxDistance = 500;
+        // controls.minDistance = 100;
+        // controls.maxDistance = 500;
 
-        controls.maxPolarAngle = Math.PI / 2;
+        // controls.maxPolarAngle = Math.PI / 2;
 
-        // controls = new FirstPersonControls(camera, renderer.domElement); // 第一人稱視角(相機,繪製輸出的Canvas物件)
-        // controls.lookSpeed = 0.009; //環視速度(預設為0.005)
-        // controls.movementSpeed = 10; //移動速度(預設為1)
-        // controls.lookVertical = false; //垂直環視
-        // controls.constrainVertical = false; //垂直限制
+        controls = new FirstPersonControls(camera, renderer.domElement); // 第一人稱視角(相機,繪製輸出的Canvas物件)
+        controls.lookSpeed = 0.012; //環視速度(預設為0.005)
+        controls.movementSpeed = 10; //移動速度(預設為1)
+        controls.lookVertical = false; //垂直環視
+        controls.constrainVertical = false; //垂直限制
 
         // lights
 
@@ -59,8 +59,8 @@ const MRT = () => {
         dirLight2.position.set(- 1, - 1, - 1);
         scene.add(dirLight2);
 
-        // const ambientLight = new THREE.AmbientLight( 0x222222 );
-        // scene.add( ambientLight );
+        const ambientLight = new THREE.AmbientLight( 0x222222 );
+        scene.add( ambientLight );
 
         //加入地板
         const planeGeometry = new THREE.PlaneGeometry(60, 60)
@@ -86,8 +86,8 @@ const MRT = () => {
     }
     function loadmodles() {
         loader.load(mrtglb, (gltf) => {
-            gltf.scene.scale.set(5, 5, 5);//設定大小
-            gltf.scene.position.set(0, -5.8, -20);//設定位置
+            gltf.scene.scale.set(25, 25, 25);//設定大小
+            gltf.scene.position.set(-40, -25, -80);//設定位置
             scene.add(gltf.scene)
         })
         floader.load(staff, (obj) => {
@@ -105,9 +105,9 @@ const MRT = () => {
 
         requestAnimationFrame(animate);
 
-        controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
+        //controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
 
-        //controls.update(clock.getDelta());
+        controls.update(clock.getDelta());
 
         if (mixer) mixer.update(clock.getDelta()) //for 人物動畫
 
