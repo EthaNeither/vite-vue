@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import spmkglb from '../assets/place/supermarket.glb?url'
+const spmkglb = new URL('../assets/place/supermarket.glb', import.meta.url).href
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'

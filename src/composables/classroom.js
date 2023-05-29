@@ -1,11 +1,11 @@
 import * as THREE from 'three'
-import teacher from '../assets/people/Models/Short Hair Lady - Aria.fbx?url'
-import crglb from '../assets/place/classroom.glb?url'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls'
 
+const crglb = new URL('../assets/place/classroom.glb', import.meta.url).href
+const teacher = new URL('../assets/people/Models/Short Hair Lady - Aria.fbx', import.meta.url).href
 
 const classroom = () => {
     const loader = new GLTFLoader();
