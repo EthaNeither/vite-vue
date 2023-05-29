@@ -1,13 +1,12 @@
 import * as THREE from 'three'
-import teacher from '../assets/people/teacher(nodding).glb?url'
-import crglb from '../assets/place/classroom.glb?url'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
-//import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
-//import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls'
 
+
+const crglb = new URL('../assets/place/classroom.glb', import.meta.url).href
+const teacher = new URL('../assets/people/teacher(nodding).glb', import.meta.url).href
 
 const classroom = () => {
     const loader = new GLTFLoader();
@@ -27,7 +26,8 @@ const classroom = () => {
         document.body.appendChild(renderer.domElement);
 
         camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-        camera.position.set(0, 40, 45);
+        camera.position.set(80, 40, 35);
+        camera.rotation.y = Math.PI / 2
 
         // controls
 
@@ -95,8 +95,8 @@ const classroom = () => {
         loader.load(teacher, (obj) => { 
             const model = obj.scene       
             model.scale.set(0.07, 0.07, 0.07)
-            model.position.set(0, 10, -32)
-            //obj.rotation.y = Math.PI / 2
+            model.position.set(-80, 8, 50)
+            model.rotation.y = Math.PI / 2
             scene.add(model)
             mixer = new THREE.AnimationMixer(model)
             const clips = obj.animations

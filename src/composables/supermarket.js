@@ -1,11 +1,11 @@
 import * as THREE from 'three'
-import spmkglb from '../assets/place/supermarket.glb?url'
-//import worker from '../assets/people/worker(nodding).fbx?url'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls'
-import { Object3D } from 'three.js'
+
+const spmkglb = new URL('../assets/place/supermarket.glb', import.meta.url).href
+const worker = new URL('../assets/people/worker(nodding).glb', import.meta.url).href
 
 const supermarket = () => {
     const loader = new GLTFLoader();
@@ -25,7 +25,8 @@ const supermarket = () => {
         document.body.appendChild(renderer.domElement);
 
         camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-        camera.position.set(-15, 35, 80);
+        camera.position.set(-20, 35, -70);
+        camera.rotation.y = Math.PI 
 
         // controls
 
@@ -91,6 +92,22 @@ const supermarket = () => {
             gltf.scene.position.set(0, 0, 0);//設定位置
             scene.add(gltf.scene)
         })
+        loader.load(worker, (obj) => { 
+            const model = obj.scene       
+            model.scale.set(0.23, 0.23, 0.23)
+            model.position.set(20, 0, 20)
+            model.rotation.y = Math.PI
+            scene.add(model)
+            mixer = new THREE.AnimationMixer(model)
+            const clips = obj.animations
+            // const clip = THREE.AnimationClip.findByName(clips, 'nodding')
+            // action = mixer.clipAction(clip)
+            // action.play()
+            clips.forEach((clip)=>{
+                action = mixer.clipAction(clip)
+                action.play()
+            })
+        })
         // floader.load(worker, (obj) => {
         //     mixer = new THREE.AnimationMixer(obj)
         //     //action = obj.mixer.clipAction(obj.animations[0])
@@ -110,7 +127,7 @@ const supermarket = () => {
 
         controls.update(clock.getDelta());
 
-        if (mixer) mixer.update(clock.getDelta()) //for 人物動畫
+        if (mixer) mixer.update(clock.getDelta()*30) //for 人物動畫
 
         render();
 

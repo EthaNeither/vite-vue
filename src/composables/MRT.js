@@ -1,10 +1,11 @@
 import * as THREE from 'three'
-import mrtglb from '../assets/place/MRT.glb?url'
-//import staff from '../assets/people/staff(nodding).fbx?url'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls'
+
+const mrtglb = new URL('../assets/place/MRT.glb', import.meta.url).href
+const staff = new URL('../assets/people/staff(nodding).glb', import.meta.url).href
 
 const MRT = () => {
     const loader = new GLTFLoader();
@@ -24,7 +25,8 @@ const MRT = () => {
         document.body.appendChild(renderer.domElement);
 
         camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-        camera.position.set(40, 27, 30);
+        camera.position.set(70, 27, 30);
+        camera.rotation.y = Math.PI / 2
 
         // controls
 
@@ -90,16 +92,32 @@ const MRT = () => {
             gltf.scene.position.set(-40, -25, -80);//設定位置
             scene.add(gltf.scene)
         })
-        floader.load(staff, (obj) => {
-            mixer = new THREE.AnimationMixer(obj)
-            //action = obj.mixer.clipAction(obj.animations[0])
-            //action.play()
-            obj.scale.set(0.008, 0.008, 0.008)
-            obj.position.set(3, 4.8, -1)
-            obj.rotation.y = Math.PI / 2
-            scene.add(obj)
-
+        loader.load(staff, (obj) => { 
+            const model = obj.scene       
+            model.scale.set(0.15, 0.15, 0.15)
+            model.position.set(-20, 5, 16)
+            model.rotation.y = Math.PI / 2
+            scene.add(model)
+            mixer = new THREE.AnimationMixer(model)
+            const clips = obj.animations
+            // const clip = THREE.AnimationClip.findByName(clips, 'nodding')
+            // action = mixer.clipAction(clip)
+            // action.play()
+            clips.forEach((clip)=>{
+                action = mixer.clipAction(clip)
+                action.play()
+            })
         })
+        // floader.load(staff, (obj) => {
+        //     mixer = new THREE.AnimationMixer(obj)
+        //     //action = obj.mixer.clipAction(obj.animations[0])
+        //     //action.play()
+        //     obj.scale.set(0.008, 0.008, 0.008)
+        //     obj.position.set(3, 4.8, -1)
+        //     obj.rotation.y = Math.PI / 2
+        //     scene.add(obj)
+
+        // })
     }
     function animate() {
 
@@ -109,7 +127,7 @@ const MRT = () => {
 
         controls.update(clock.getDelta());
 
-        if (mixer) mixer.update(clock.getDelta()) //for 人物動畫
+        if (mixer) mixer.update(clock.getDelta()*30) //for 人物動畫
 
         render();
 

@@ -2,12 +2,13 @@ import * as THREE from 'three'
 import NSTC from '../assets/font/NotoSansTC-Regular.otf?url'
 import { Text } from 'troika-three-text'
 //import { RAPIER } from '@dimforge/rapier3d-compat'
-import raaglb from '../assets/place/restaurant.glb?url'
-//import server from '../assets/people/server(nodding).fbx?url'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls'
+
+const raaglb = new URL('../assets/place/restaurant.glb', import.meta.url).href
+const server = new URL('../assets/people/server(nodding).glb', import.meta.url).href
 
 const restaurant = () => {
     const loader = new GLTFLoader();
@@ -28,30 +29,31 @@ const restaurant = () => {
         document.body.appendChild(renderer.domElement);
 
         camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-        camera.position.set(-20, 30, 0);
+        camera.position.set(30, 30, 50);
+        camera.rotation.y = Math.PI / 2
 
         // // controls
 
-        controls = new OrbitControls(camera, renderer.domElement);
-        controls.listenToKeyEvents(window); // optional
+        // controls = new OrbitControls(camera, renderer.domElement);
+        // controls.listenToKeyEvents(window); // optional
 
-        //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
+        // //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
 
-        controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-        controls.dampingFactor = 0.05;
+        // controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+        // controls.dampingFactor = 0.05;
 
-        controls.screenSpacePanning = false;
+        // controls.screenSpacePanning = false;
 
-        controls.minDistance = 100;
-        controls.maxDistance = 500;
+        // controls.minDistance = 100;
+        // controls.maxDistance = 500;
 
-        controls.maxPolarAngle = Math.PI / 2;
+        // controls.maxPolarAngle = Math.PI / 2;
 
-        // controls = new FirstPersonControls(camera, renderer.domElement); // 第一人稱視角(相機,繪製輸出的Canvas物件)
-        // controls.lookSpeed = 0.012; //環視速度(預設為0.005)
-        // controls.movementSpeed = 5; //移動速度(預設為1)
-        // controls.lookVertical = false; //垂直環視
-        // controls.constrainVertical = false; //垂直限制
+        controls = new FirstPersonControls(camera, renderer.domElement); // 第一人稱視角(相機,繪製輸出的Canvas物件)
+        controls.lookSpeed = 0.012; //環視速度(預設為0.005)
+        controls.movementSpeed = 6; //移動速度(預設為1)
+        controls.lookVertical = false; //垂直環視
+        controls.constrainVertical = false; //垂直限制
 
         // lights
 
@@ -84,9 +86,10 @@ const restaurant = () => {
     const myText = new Text()
     function textInteraction() {
         myText.font = NSTC
-        myText.text = ' 我想下班'
+        myText.text = '我想下班'
         myText.fontSize = 2
-        myText.position.set(-5, 35, -5)
+        myText.rotation.y = Math.PI / 2
+        myText.position.set(-60, 42, 32)
         myText.color = 0x9966FF
         scene.add(myText)
     }
@@ -137,15 +140,22 @@ const restaurant = () => {
             gltf.scene.position.set(0, 7, 25);//設定位置
             scene.add(gltf.scene)
         })
-        // floader.load(server, (obj) => {
-        //     mixer = new THREE.AnimationMixer(obj)
-        //     //action = obj.mixer.clipAction(obj.animations[0])
-        //     //action.play()
-        //     obj.scale.set(0.01, 0.01, 0.01)
-        //     obj.position.set(0, 8.3, -8.7)
-        //     scene.add(obj)
-
-        // })
+        loader.load(server, (obj) => { 
+            const model = obj.scene       
+            model.scale.set(0.15, 0.15, 0.15)
+            model.position.set(-60, 10, 27)
+            model.rotation.y = Math.PI / 2
+            scene.add(model)
+            mixer = new THREE.AnimationMixer(model)
+            const clips = obj.animations
+            // const clip = THREE.AnimationClip.findByName(clips, 'nodding')
+            // action = mixer.clipAction(clip)
+            // action.play()
+            clips.forEach((clip)=>{
+                action = mixer.clipAction(clip)
+                action.play()
+            })
+        })
 
     }
     function animate() {
@@ -154,9 +164,9 @@ const restaurant = () => {
 
         //controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
 
-        //controls.update(clock.getDelta());
+        controls.update(clock.getDelta());
 
-        if (mixer) mixer.update(clock.getDelta()) //for 人物動畫
+        if (mixer) mixer.update(clock.getDelta()*30) //for 人物動畫
 
         render();
 
