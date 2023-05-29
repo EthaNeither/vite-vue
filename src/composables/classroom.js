@@ -4,6 +4,9 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls'
 
+/**
+ * import from URL
+ */
 const crglb = new URL('../assets/place/classroom.glb', import.meta.url).href
 const teacher = new URL('../assets/people/Models/Short Hair Lady - Aria.fbx', import.meta.url).href
 
