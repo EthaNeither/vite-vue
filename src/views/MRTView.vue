@@ -4,6 +4,7 @@
 
 <script>
 import mrt from '../composables/MRT.js'
+import { onBeforeUnmount } from "vue"
 export default {
     
     setup(){
@@ -11,6 +12,9 @@ export default {
         init()
         loadmodles()
         animate()
+        onBeforeUnmount(()=>{
+            document.querySelector("canvas").remove()
+        })
     }
 }
 

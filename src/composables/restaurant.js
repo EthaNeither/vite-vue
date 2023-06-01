@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import NSTC from '../assets/font/NotoSansTC-Regular.otf?url'
 import { Text } from 'troika-three-text'
-//import { RAPIER } from '@dimforge/rapier3d-compat'
+import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
@@ -16,7 +16,8 @@ const restaurant = () => {
     let camera, controls, scene, renderer;
     var clock = new THREE.Clock(); // 時間物件 for 更新第一人稱視角控制 
     var mixer, action //for 人物動畫
-    
+
+
     function init() {
 
         scene = new THREE.Scene();
@@ -68,18 +69,14 @@ const restaurant = () => {
         // const ambientLight = new THREE.AmbientLight( 0x222222 );
         // scene.add( ambientLight );
 
-        //加入地板
-        const planeGeometry = new THREE.PlaneGeometry(600, 600)
-        const planeMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 })
-        let plane = new THREE.Mesh(planeGeometry, planeMaterial)
-        plane.rotation.x = -0.5 * Math.PI // 使平面與 y 軸垂直，並讓正面朝上
-        plane.position.set(0, 0, 0)
-        scene.add(plane)
+
 
         const axesHelper = new THREE.AxesHelper(100);
         scene.add(axesHelper);
 
         window.addEventListener('resize', onWindowResize);
+
+        //add walls
 
     }
 
@@ -93,38 +90,50 @@ const restaurant = () => {
         myText.color = 0x9966FF
         scene.add(myText)
     }
-    import('@dimforge/rapier3d-compat').then(RAPIER => {
-        // Use the RAPIER module here.
-        let gravity = { x: 0.0, y: -9.81, z: 0.0 };
-        let world = new RAPIER.World(gravity);
+    async function collideraction() {
+        await RAPIER.init();
+        let world = new RAPIER.World({ x: 0.0, y: -9.81, z: 0.0 });
 
-        // Create the ground
-        let groundColliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.1, 10.0);
-        world.createCollider(groundColliderDesc);
+        //加入地板
+        const planeGeometry = new THREE.PlaneGeometry(600, 600, 600)
+        const planeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff })
+        let plane = new THREE.Mesh(planeGeometry, planeMaterial)
+        plane.rotation.x = -0.5 * Math.PI // 使平面與 y 軸垂直，並讓正面朝上
+        plane.position.set(0, 10, 0)
+        scene.add(plane)
 
-        // Create a dynamic rigid-body.
-        let rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic()
-            .setTranslation(0.0, 1.0, 0.0);
-        let rigidBody = world.createRigidBody(rigidBodyDesc);
+        const floorBodyDesc = RAPIER.RigidBodyDesc.fixed()
+        const floorBody = world.createRigidBody(floorBodyDesc);
+        const floorcolliderDesc = RAPIER.ColliderDesc.cuboid(600, 600, 600).setTranslation(0, 8, 0);
+        world.createCollider(floorcolliderDesc, floorBody.handle);
 
-        // Create a cuboid collider attached to the dynamic rigidBody.
-        let colliderDesc = RAPIER.ColliderDesc.cuboid(0.5, 0.5, 0.5);
-        let collider = world.createCollider(colliderDesc, rigidBody);
+        const geometry = new THREE.BoxGeometry(40, 10, 10);
+        const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const wall = new THREE.Mesh(geometry, material)
+        wall.position.set(0, 30, 0);
+        scene.add(wall)
 
-        // Game loop. Replace by your own game loop system.
-        let gameLoop = () => {
-            // Ste the simulation forward.  
-            world.step();
+        const wallBodyDesc = RAPIER.RigidBodyDesc.fixed()
+        const wallBody = world.createRigidBody(wallBodyDesc);
+        const wallcolliderDesc = RAPIER.ColliderDesc.cuboid(40, 10, 10).setTranslation(0, 30, 0);
+        world.createCollider(wallcolliderDesc, wallBody.handle);
 
-            // Get and print the rigid-body's position.
-            let position = rigidBody.translation();
-            console.log("Rigid-body position: ", position.x, position.y, position.z);
+        const characterDesc = RAPIER.RigidBodyDesc.dynamic().setLinvel(1.0, 3.0, 4.0)
+        const character = world.createRigidBody(characterDesc).setNextKinematicTranslation(30, 30, 50);
+        const charactercolliderDesc = RAPIER.ColliderDesc.cuboid(10, 10, 10);
+        const collider = world.createCollider(charactercolliderDesc)
 
-            setTimeout(gameLoop, 16);
-        };
+        let offset = 0.01;
+        let characterController = world.createCharacterController(offset)
+        characterController.computeColliderMovement(
+            collider,           // The collider we would like to move.
+            desiredTranslation, // The movement we would like to apply if there wasn’t any obstacle.
+        );
+        // Read the result.
+        let correctedMovement = characterController.computedMovement();
 
-        gameLoop();
-    })
+    }
+
 
     function onWindowResize() {
 
@@ -140,8 +149,8 @@ const restaurant = () => {
             gltf.scene.position.set(0, 7, 25);//設定位置
             scene.add(gltf.scene)
         })
-        loader.load(server, (obj) => { 
-            const model = obj.scene       
+        loader.load(server, (obj) => {
+            const model = obj.scene
             model.scale.set(0.15, 0.15, 0.15)
             model.position.set(-60, 10, 27)
             model.rotation.y = Math.PI / 2
@@ -151,7 +160,7 @@ const restaurant = () => {
             // const clip = THREE.AnimationClip.findByName(clips, 'nodding')
             // action = mixer.clipAction(clip)
             // action.play()
-            clips.forEach((clip)=>{
+            clips.forEach((clip) => {
                 action = mixer.clipAction(clip)
                 action.play()
             })
@@ -166,8 +175,7 @@ const restaurant = () => {
 
         controls.update(clock.getDelta());
 
-        if (mixer) mixer.update(clock.getDelta()*30) //for 人物動畫
-
+        if (mixer) mixer.update(clock.getDelta() * 30) //for 人物動畫
         render();
 
     }
@@ -176,6 +184,6 @@ const restaurant = () => {
         renderer.render(scene, camera);
 
     }
-    return { init, textInteraction, loadmodles, animate }
+    return { init, textInteraction, collideraction, loadmodles, animate }
 }
 export default restaurant
