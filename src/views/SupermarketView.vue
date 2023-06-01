@@ -4,6 +4,7 @@
 
 <script>
 import spmk from '../composables/supermarket.js'
+import { onBeforeUnmount } from "vue"
 export default {
     
     setup(){
@@ -11,6 +12,13 @@ export default {
         init()
         loadmodles()
         animate()
+
+        /**
+         * pop three from canvas stack
+         */
+         onBeforeUnmount(()=>{
+            document.querySelector("canvas").remove()
+        })
     }
 }
 </script>

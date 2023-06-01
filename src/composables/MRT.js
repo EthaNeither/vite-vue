@@ -1,18 +1,18 @@
 import * as THREE from 'three'
-import mrtglb from '../assets/place/MRT.glb?url'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls'
 
+const mrtglb = new URL('../assets/place/MRT.glb', import.meta.url).href
+
 const MRT = () => {
     const loader = new GLTFLoader();
     const floader = new FBXLoader(); //for 載入人物
-    let camera, controls, scene, renderer;
+    let camera, controls, scene, renderer , dom ;
     var clock = new THREE.Clock(); // 時間物件 for 更新第一人稱視角控制 
 
     function init() {
-
         scene = new THREE.Scene();
         scene.background = new THREE.Color(0xcccccc);
         scene.fog = new THREE.FogExp2(0xcccccc, 0.002);
@@ -90,6 +90,6 @@ const MRT = () => {
         renderer.render(scene, camera);
 
     }
-    return { init, loadmodles, animate }
+    return { init, loadmodles, animate}
 }
 export default MRT

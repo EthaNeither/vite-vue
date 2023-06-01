@@ -1,9 +1,10 @@
 import * as THREE from 'three'
-import raaglb from '../assets/place/restaurant.glb?url'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls'
+
+const raaglb = new URL('../assets/place/restaurant.glb', import.meta.url).href
 
 const restaurant = () => {
     const loader = new GLTFLoader();
